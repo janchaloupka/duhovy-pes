@@ -56,7 +56,7 @@ namespace Inkluzitron.Handlers
                 Format.Sanitize(await UsersService.GetDisplayNameAsync(user))
             );
 
-            await user.Guild.DefaultChannel.SendMessageAsync(leaveMessage);
+            await user.Guild.SystemChannel.SendMessageAsync(leaveMessage);
         }
 
         /// <summary>
@@ -97,11 +97,11 @@ namespace Inkluzitron.Handlers
                     Format.Sanitize(await UsersService.GetDisplayNameAsync(invite.GeneratedByUserId))
                 );
 
-                await user.Guild.DefaultChannel.SendMessageAsync(welcomeMessage);
+                await user.Guild.SystemChannel.SendMessageAsync(welcomeMessage);
                 return;
             }
 
-            await user.Guild.DefaultChannel.SendMessageAsync(
+            await user.Guild.SystemChannel.SendMessageAsync(
                 $"Uživatel **{Format.Sanitize(user.Username)}** se připojil na server pomocí odkazu, který nebyl vytvořen `$invite` příkazem!");
         }
     }
