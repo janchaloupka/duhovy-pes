@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using Inkluzitron.Data;
 using Inkluzitron.Extensions;
 using Inkluzitron.Services;
+using Inkluzitron.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -37,7 +38,7 @@ namespace Inkluzitron.Handlers
 
         private string GetRandomMessageTemplate(string templateKey)
         {
-            var firstLine = Config.GetValue<string[]>(templateKey);
+            var firstLine = Config.GetSection(templateKey).Get<string[]>();
 
             return firstLine[ThreadSafeRandom.Next(firstLine.Length)];
         }
@@ -51,7 +52,7 @@ namespace Inkluzitron.Handlers
 
             var leaveMessage = string.Format(
                 leaveMessageTemplate,
-                userDb.Gender,
+                new FormatByValue(userDb.Gender),
                 Format.Sanitize(await UsersService.GetDisplayNameAsync(user))
             );
 
@@ -91,7 +92,7 @@ namespace Inkluzitron.Handlers
 
                 var welcomeMessage = string.Format(
                     welcomeMessageTemplate,
-                    inviteeDb.Gender,
+                    new FormatByValue(inviteeDb.Gender),
                     Format.Sanitize(await UsersService.GetDisplayNameAsync(user)),
                     Format.Sanitize(await UsersService.GetDisplayNameAsync(invite.GeneratedByUserId))
                 );
