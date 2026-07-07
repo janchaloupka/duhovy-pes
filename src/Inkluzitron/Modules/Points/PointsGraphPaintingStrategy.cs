@@ -1,4 +1,4 @@
-﻿using ImageMagick;
+using ImageMagick;
 using ImageMagick.Drawing;
 using Inkluzitron.Models;
 using Inkluzitron.Services;
@@ -13,7 +13,7 @@ namespace Inkluzitron.Modules.Points
         public PointsGraphPaintingStrategy()
             : base(
                 new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed),
-                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed),
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed), 
                 new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed),
                 new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed)
             )
