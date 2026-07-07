@@ -1,5 +1,6 @@
 ﻿using Discord.WebSocket;
 using ImageMagick;
+using ImageMagick.Drawing;
 using Inkluzitron.Data;
 using Inkluzitron.Data.Entities;
 using Inkluzitron.Extensions;
@@ -28,7 +29,7 @@ namespace Inkluzitron.Services
 
         private const string NicknameFontFamily = "Open Sans";
         private const int NicknameFontSize = 10;
-        private readonly DrawableFont NicknameFont = new (NicknameFontFamily) { Weight = FontWeight.Bold };
+        private readonly DrawableFont NicknameFont = new (NicknameFontFamily, FontStyleType.Normal, FontWeight.Bold, FontStretch.Normal);
         private const double NodeSize = 128.0;
         private const double AvatarSize = 100.0;
 
@@ -46,7 +47,7 @@ namespace Inkluzitron.Services
 
             await guild.DownloadUsersAsync();
             var guildUserIds = guild.Users.Select(u => u.Id).ToHashSet();
-            var avatarSize = new MagickGeometry((int) Math.Round(AvatarSize), (int) Math.Round(AvatarSize));
+            var avatarSize = new MagickGeometry((uint) Math.Round(AvatarSize), (uint) Math.Round(AvatarSize));
 
             using var dbContext = DbFactory.Create();
             var graph = new GeometryGraph() { Margins = 64 };
@@ -81,8 +82,8 @@ namespace Inkluzitron.Services
 
             using var image = new MagickImage(
                 MagickColors.Black,
-                (int)Math.Ceiling(graph.Width),
-                (int)Math.Ceiling(graph.Height)
+                (uint)Math.Ceiling(graph.Width),
+                (uint)Math.Ceiling(graph.Height)
             );
 
             IDrawables<byte> drawables = new Drawables()
@@ -141,7 +142,7 @@ namespace Inkluzitron.Services
             }
 
             // Finish with user display names
-            var nicknameBoxWidth = (int)Math.Round(0.9 * NodeSize);
+            var nicknameBoxWidth = (uint)Math.Round(0.9 * NodeSize);
             foreach (var node in graph.Nodes)
             {
                 var user = (User)node.UserData;

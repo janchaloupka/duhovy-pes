@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace Inkluzitron.Utilities
 {
@@ -18,10 +17,6 @@ namespace Inkluzitron.Utilities
         }
 
         public ValuesDisposingDictionary()
-        {
-        }
-
-        protected ValuesDisposingDictionary(SerializationInfo serializationInfo, StreamingContext streamingContext) : base(serializationInfo, streamingContext)
         {
         }
     }

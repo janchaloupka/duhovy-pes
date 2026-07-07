@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ImageMagick;
+using ImageMagick.Drawing;
 using Inkluzitron.Models;
 
 namespace Inkluzitron.Services
@@ -8,8 +9,8 @@ namespace Inkluzitron.Services
     {
         public int ColumnCount { get; init; } = 5;
         public MagickColor BackgroundColor { get; set; } = MagickColors.Black;
-        public int CategoryBoxPadding { get; set; } = 20;
-        public int CategoryBoxHeight { get; set; } = 350;
+        public uint CategoryBoxPadding { get; set; } = 20;
+        public uint CategoryBoxHeight { get; set; } = 350;
 
         public DrawableFont GridLinePercentageFont { get; set; }
         public double GridLinePercentageFontSize { get; set; } = 20;
@@ -23,7 +24,7 @@ namespace Inkluzitron.Services
         public MagickColor CategoryBoxBackground { get; set; } = new MagickColor("#33333399");
         public MagickColor CategoryBoxHeadingForeground { get; set; } = new MagickColor("#EEEEEE7F");
 
-        public int AvatarSize { get; set; } = 64;
+        public uint AvatarSize { get; set; } = 64;
         public DrawableFont UsernameFont { get; set; }
         public double UsernameFontSize { get; set; } = 20;
         public MagickColor UsernameForeground { get; set; } = new MagickColor("#FFFFDD7F");

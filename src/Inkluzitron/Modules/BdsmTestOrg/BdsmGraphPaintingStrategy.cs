@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using ImageMagick.Drawing;
 using Inkluzitron.Models;
 using Inkluzitron.Services;
 using System;
@@ -11,10 +12,10 @@ namespace Inkluzitron.Modules.BdsmTestOrg
     {
         public BdsmGraphPaintingStrategy()
             : base(
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Bold },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light }
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed),
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Bold, FontStretch.Condensed),
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed),
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed)
             )
         {
         }

@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using ImageMagick.Drawing;
 using Inkluzitron.Models;
 using Inkluzitron.Services;
 using System;
@@ -11,10 +12,10 @@ namespace Inkluzitron.Modules.Points
     {
         public PointsGraphPaintingStrategy()
             : base(
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light }
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed),
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed),
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed),
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed)
             )
         {
             CategoryBoxHeight = 1024;

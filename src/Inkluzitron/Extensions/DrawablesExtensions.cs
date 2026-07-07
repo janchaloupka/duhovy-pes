@@ -1,5 +1,5 @@
 ﻿using ImageMagick;
-using System.Collections.Generic;
+using ImageMagick.Drawing;
 
 namespace Inkluzitron.Extensions
 {

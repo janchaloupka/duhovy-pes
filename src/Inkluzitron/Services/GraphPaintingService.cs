@@ -7,6 +7,7 @@ using Inkluzitron.Utilities;
 using Inkluzitron.Extensions;
 using Inkluzitron.Models;
 using ImageMagick;
+using ImageMagick.Drawing;
 
 namespace Inkluzitron.Services
 {
@@ -51,30 +52,30 @@ namespace Inkluzitron.Services
             // Obtain all quiz results to be displayed and sort them by category name.
             var topList = toplistResults.OrderBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase).ToList();
 
-            var categoryWidth = (3 + topList.Max(kvp => kvp.Value.Count)) * strategy.AvatarSize;
+            var categoryWidth = (uint)(3 + topList.Max(kvp => kvp.Value.Count)) * strategy.AvatarSize;
             var categoryHeight = strategy.CategoryBoxHeight;
-            var columnCount = Math.Min(strategy.ColumnCount, toplistResults.Count);
-            var rowCount = (int)Math.Ceiling(topList.Count / (1f * columnCount));
+            var columnCount = (uint)Math.Min(strategy.ColumnCount, toplistResults.Count);
+            var rowCount = (uint)Math.Ceiling(topList.Count / (1f * columnCount));
             var imageWidth = (2f * strategy.CategoryBoxPadding) + ((columnCount - 1) * strategy.CategoryBoxPadding) + (columnCount * categoryWidth);
             var imageHeight = (2f * strategy.CategoryBoxPadding) + ((rowCount - 1) * strategy.CategoryBoxPadding) + (rowCount * categoryHeight);
-            var image = new MagickImage(strategy.BackgroundColor, (int)Math.Ceiling(imageWidth), (int)Math.Ceiling(imageHeight));
+            var image = new MagickImage(strategy.BackgroundColor, (uint)Math.Ceiling(imageWidth), (uint)Math.Ceiling(imageHeight));
 
-            for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
+            for (var columnIndex = 0u; columnIndex < columnCount; columnIndex++)
             {
                 var x = strategy.CategoryBoxPadding + (columnIndex * (categoryWidth + strategy.CategoryBoxPadding));
 
-                for (var rowIndex = 0; rowIndex < rowCount; rowIndex++)
+                for (var rowIndex = 0u; rowIndex < rowCount; rowIndex++)
                 {
                     var y = strategy.CategoryBoxPadding + (rowIndex * (categoryHeight + strategy.CategoryBoxPadding));
 
-                    var i = (rowIndex * columnCount) + columnIndex;
+                    var i = (int) ((rowIndex * columnCount) + columnIndex);
                     if (i >= topList.Count)
                         continue;
 
                     var minValueInCategory = Convert.ToSingle(topList[i].Value.Min(v => v.Value));
                     var maxValueInCategory = Convert.ToSingle(topList[i].Value.Max(v => v.Value));
 
-                    var categoryRect = new MagickGeometry(x, y, categoryWidth, categoryHeight);
+                    var categoryRect = new MagickGeometry((int) x, (int) y, categoryWidth, categoryHeight);
 
                     DrawCategory(
                         image, strategy, categoryRect, topList[i].Key,
@@ -134,7 +135,7 @@ namespace Inkluzitron.Services
             var gridLineLabelPadding = drawable.FontTypeMetrics("X").TextWidth;
 
             // Shrink the area where grid lines so that there's space left for percentage labels.
-            dst.Width -= (int)(gridLineLabelMaxWidth - gridLineLabelPadding);
+            dst.Width -= (uint)(gridLineLabelMaxWidth - gridLineLabelPadding);
 
             // Determine the displayed ranged and adjust the number of grid lines so that the percentage values are nice.
             var innerGridLineCount = strategy.CalculateGridLineCount(minValue, maxValue);
@@ -177,7 +178,7 @@ namespace Inkluzitron.Services
             var headingPadding = 0.2f * headingSize.TextHeight;
             var headingHeightWithPadding = (int)((2 * headingPadding) + headingSize.TextHeight);
             graphArea.Y += headingHeightWithPadding;
-            graphArea.Height -= headingHeightWithPadding;
+            graphArea.Height -= (uint) headingHeightWithPadding;
 
             drawable
                 .Text(
@@ -189,9 +190,9 @@ namespace Inkluzitron.Services
             // Reduce the width & center the graph area so that there is some (= 0.75*AvatarSize) padding left.
             var gridLinesArea = graphArea;
             gridLinesArea.X += (int)(0.75f * strategy.AvatarSize);
-            gridLinesArea.Width -= (int)(0.75f * strategy.AvatarSize * 2);
+            gridLinesArea.Width -= (uint)(0.75f * strategy.AvatarSize * 2);
             gridLinesArea.Y -= (int)((-0.75f * strategy.AvatarSize) - (0.50f * headingSize.TextHeight));
-            gridLinesArea.Height += (int)(((-0.75f * strategy.AvatarSize) - (0.50f * headingSize.TextHeight)) * 2);
+            gridLinesArea.Height += (uint)(((-0.75f * strategy.AvatarSize) - (0.50f * headingSize.TextHeight)) * 2);
 
             // Draw grid lines over the established area.
             DrawCategoryGridLines(image, strategy, gridLinesArea, minValue, maxValue, out avatarsArea);
@@ -209,7 +210,7 @@ namespace Inkluzitron.Services
 
             // The avatars are drawn centered around the calculated coordinates.
             // By shrinking the drawing area width by AvatarSize/2 from both sides, we avoid drawing out of the grid lines area.
-            avatarsArea.X += strategy.AvatarSize / 2;
+            avatarsArea.X += (int) (strategy.AvatarSize / 2);
             avatarsArea.Width -= strategy.AvatarSize;
 
             var itemSpacingX = avatarsArea.Width / areaWidthDivisor;    // Establish the spacing between centers of drawn avatars
@@ -221,7 +222,7 @@ namespace Inkluzitron.Services
 
             var isAbove = datas.Length % 2 == 1; // Determine the initial username location (above/below) so that 1st result has username on top.
             var i = datas.Length;
-            var maxUsernameWidth = (int)(1.5 * avatarSize.Width);
+            var maxUsernameWidth = (uint)(1.5 * avatarSize.Width);
 
             var nicknameDrawable = new Drawables()
                 .Font(strategy.UsernameFont)
@@ -230,8 +231,8 @@ namespace Inkluzitron.Services
             foreach ((var picture, var username, var value) in datas.Reverse())
             {
                 var y = avatarsArea.Y + avatarsArea.Height - (int)(avatarsArea.Height * (value - minValue) / (maxValue - minValue));
-                
-                image.Composite(picture, x - avatarSize.Width / 2, y - avatarSize.Height / 2, CompositeOperator.Over);
+
+                image.Composite(picture, (int)(x - avatarSize.Width / 2), (int)(y - avatarSize.Height / 2), CompositeOperator.Over);
 
                 var nickHeight = nicknameDrawable.FontTypeMetrics(username).TextHeight;
 

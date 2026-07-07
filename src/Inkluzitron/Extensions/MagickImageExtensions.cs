@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using ImageMagick.Drawing;
 using System.Linq;
 using System.Security;
 
@@ -33,12 +34,12 @@ namespace Inkluzitron.Extensions
 
         static public void DrawEnhancedText(
             this IMagickImage<byte> image, string text, int x, int y, MagickColor foreground,
-            DrawableFont font, double fontPointSize, int maxWidth, bool ellipsize = true)
+            DrawableFont font, double fontPointSize, uint maxWidth, bool ellipsize = true)
             => DrawEnhancedText(image, text, Gravity.Undefined, x, y, foreground, font, fontPointSize, maxWidth, ellipsize);
 
         static public void DrawEnhancedText(
             this IMagickImage<byte> image, string text, Gravity gravity, int x, int y, MagickColor foreground,
-            DrawableFont font, double fontPointSize, int maxWidth, bool ellipsize = true)
+            DrawableFont font, double fontPointSize, uint maxWidth, bool ellipsize = true)
         {
             var settings = new MagickReadSettings()
             {

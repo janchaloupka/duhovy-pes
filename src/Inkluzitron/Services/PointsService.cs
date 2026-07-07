@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using ImageMagick;
+using ImageMagick.Drawing;
 using Inkluzitron.Contracts;
 using Inkluzitron.Data;
 using Inkluzitron.Data.Entities;
@@ -52,15 +53,15 @@ namespace Inkluzitron.Services
             UsersService = usersService;
 
             const string font = "Open Sans";
-            DataFont = new DrawableFont(font) { Weight = FontWeight.Bold };
+            DataFont = new DrawableFont(font, FontStyleType.Normal, FontWeight.Bold, FontStretch.Normal);
             DataFontSize = 40;
-            NicknameFont = new DrawableFont(font) { Weight = FontWeight.Bold };
+            NicknameFont = new DrawableFont(font, FontStyleType.Normal, FontWeight.Bold, FontStretch.Normal);
             NicknameFontSize = 40;
             LabelFont = new DrawableFont(font);
             LabelFontSize = 20;
             SmallLabelFont = new DrawableFont(font);
             SmallLabelFontSize = 15;
-            SmallDataFont = new DrawableFont(font) { Weight = FontWeight.SemiBold };
+            SmallDataFont = new DrawableFont(font, FontStyleType.Normal, FontWeight.SemiBold, FontStretch.Normal);
             SmallDataFontSize = 24;
         }
 

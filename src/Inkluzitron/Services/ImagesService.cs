@@ -205,8 +205,8 @@ namespace Inkluzitron.Services
 
         static private IMagickImage<byte> RenderWhipFrame(IMagickImage<byte> avatar, IMagickImage<byte> sourceFrame, int index)
         {
-            var deformation = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 5, 9, 6, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            var translation = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            uint[] deformation = [ 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 5, 9, 6, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+            uint[] translation = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 
             var frame = new MagickImage(MagickColors.Transparent, 250, 145);
 
@@ -214,7 +214,7 @@ namespace Inkluzitron.Services
             frameAvatar.InterpolativeResize(100 - deformation[index], 100, PixelInterpolateMethod.Bilinear);
 
             frame.Composite(sourceFrame, 0, -10, CompositeOperator.Over);
-            frame.Composite(frameAvatar, 135 + deformation[index] + translation[index], 30, CompositeOperator.Over);
+            frame.Composite(frameAvatar, (int) (135 + deformation[index] + translation[index]), 30, CompositeOperator.Over);
 
             return frame;
         }
@@ -268,14 +268,14 @@ namespace Inkluzitron.Services
 
         static private IMagickImage<byte> RenderBonkFrame(IMagickImage<byte> avatar, IMagickImage<byte> sourceFrame, int index)
         {
-            var deformation = new[] { 0, 0, 0, 0, 5, 20, 15, 5 };
+            uint[] deformation = [ 0, 0, 0, 0, 5, 20, 15, 5 ];
 
             var frame = new MagickImage(MagickColors.Transparent, 250, 170);
 
             using var frameAvatar = avatar.Clone();
             frameAvatar.InterpolativeResize(110, 100 - deformation[index], PixelInterpolateMethod.Bilinear);
 
-            frame.Composite(frameAvatar, 100, 60 + deformation[index], CompositeOperator.Over);
+            frame.Composite(frameAvatar, 100, (int)(60 + deformation[index]), CompositeOperator.Over);
             frame.Composite(sourceFrame, 0, 0, CompositeOperator.Over);
 
             return frame;
@@ -403,9 +403,9 @@ namespace Inkluzitron.Services
             var frame = new MagickImage(MagickColors.Transparent, 130, 150);
 
             using var frameAvatar = avatar.Clone();
-            frameAvatar.InterpolativeResize(100 - deformation[index].X, 100 - deformation[index].Y, PixelInterpolateMethod.Bilinear);
+            frameAvatar.InterpolativeResize((uint)(100 - deformation[index].X), (uint)(100 - deformation[index].Y), PixelInterpolateMethod.Bilinear);
 
-            frame.Composite(frameAvatar, 110 - frameAvatar.Width, 150 - frameAvatar.Height, CompositeOperator.Over);
+            frame.Composite(frameAvatar, 110 - (int)frameAvatar.Width, 150 - (int)frameAvatar.Height, CompositeOperator.Over);
             frame.Composite(sourceFrame, 0, 0, CompositeOperator.Over);
 
             return frame;
@@ -417,7 +417,7 @@ namespace Inkluzitron.Services
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
 
-            var delayTime = harder ? 3 : 5;
+            var delayTime = harder ? 3u : 5u;
 
             var cacheObject = Cache.WithCategory("Spank")
                 .WithUnique(target.Id)
@@ -469,16 +469,16 @@ namespace Inkluzitron.Services
 
         static private IMagickImage<byte> RenderSpankFrame(IMagickImage<byte> avatar, IMagickImage<byte> sourceFrame, int index, bool harder)
         {
-            var deformation = new[] { 4, 2, 1, 0, 0, 0, 0, 3 };
-            int deformationCoef = harder ? 7 : 2;
+            uint[] deformation = [4, 2, 1, 0, 0, 0, 0, 3 ];
+            var deformationCoef = harder ? 7u : 2u;
 
             var frame = new MagickImage(MagickColors.Transparent, 230, 150);
 
             using var frameAvatar = avatar.Clone();
-            frameAvatar.InterpolativeResize(100 + (deformationCoef * deformation[index]), 100 + (deformationCoef * deformation[index]), PixelInterpolateMethod.Bilinear);
+            frameAvatar.InterpolativeResize(100u + (deformationCoef * deformation[index]), 100u + (deformationCoef * deformation[index]), PixelInterpolateMethod.Bilinear);
 
             frame.Composite(sourceFrame, 10, 15, CompositeOperator.Over);
-            frame.Composite(frameAvatar, 80 - deformation[index], 10 - deformation[index], CompositeOperator.Over);
+            frame.Composite(frameAvatar, 80 - (int)deformation[index], 10 - (int)deformation[index], CompositeOperator.Over);
 
             return frame;
         }

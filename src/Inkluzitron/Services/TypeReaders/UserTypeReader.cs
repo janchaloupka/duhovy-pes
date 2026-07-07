@@ -42,7 +42,7 @@ namespace Inkluzitron.Services.TypeReaders
             }
             else if (context.Guild is SocketGuild guild)
             {
-                await guild.DownloadUsersAsync();
+                await guild.DownloadUsersAsync().ConfigureAwait(false);
 
                 var matches = guild.Users
                     .Where(o => (!string.IsNullOrEmpty(o.Nickname) && o.Nickname.Contains(input, StringComparison.CurrentCultureIgnoreCase)) || o.Username.Contains(input, StringComparison.CurrentCultureIgnoreCase))
