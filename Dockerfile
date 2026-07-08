@@ -3,9 +3,9 @@ ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
 
 WORKDIR /source
 COPY src/Inkluzitron/*.csproj src/Inkluzitron/
-RUN dotnet restore src/Inkluzitron/ -r linux-x64
+RUN dotnet restore src/Inkluzitron/ -r linux-musl-x64
 COPY . .
-RUN dotnet publish src/Inkluzitron/ -c release -o /app -r linux-x64 --no-self-contained --no-restore
+RUN dotnet publish src/Inkluzitron/ -c release -o /app -r linux-musl-x64 --no-self-contained --no-restore
 
 FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine3.24
 RUN apk add tzdata fontconfig font-opensans
