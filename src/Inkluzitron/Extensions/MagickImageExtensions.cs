@@ -9,14 +9,15 @@ namespace Inkluzitron.Extensions
     {
         static public void RoundImage(this IMagickImage<byte> image)
         {
-            using var mask = new MagickImage(MagickColors.Transparent, image.Width, image.Height);
+            using var mask = new MagickImage(MagickColors.Black, image.Width, image.Height);
             new Drawables()
                 .FillColor(MagickColors.White)
                 .Circle(image.Width / 2, image.Height / 2, image.Width / 2, 0)
                 .Draw(mask);
 
             image.Alpha(AlphaOption.On);
-            image.Composite(mask, CompositeOperator.Multiply);
+            mask.Alpha(AlphaOption.Off);
+            image.Composite(mask, CompositeOperator.CopyAlpha);
         }
 
         static public IMagickColor<byte> GetDominantColor(this IMagickImage<byte> image)
