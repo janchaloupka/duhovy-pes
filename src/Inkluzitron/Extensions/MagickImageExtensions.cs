@@ -68,7 +68,7 @@ namespace Inkluzitron.Extensions
 
             using var colored = new MagickImage(foreground, textArea.Width, textArea.Height);
             colored.Alpha(AlphaOption.On);
-            colored.Composite(textArea, CompositeOperator.Multiply, Channels.Alpha);
+            colored.Composite(textArea, CompositeOperator.In);
 
             image.Composite(colored, x, y, CompositeOperator.Over);
         }
