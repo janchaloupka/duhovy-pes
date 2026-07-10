@@ -12,10 +12,10 @@ namespace Inkluzitron.Modules.Points
     {
         public PointsGraphPaintingStrategy()
             : base(
-                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed),
-                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed), 
                 new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed),
-                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Light, FontStretch.Condensed)
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Medium, FontStretch.Condensed), 
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Medium, FontStretch.Condensed),
+                new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed)
             )
         {
             CategoryBoxHeight = 1024;
@@ -27,10 +27,24 @@ namespace Inkluzitron.Modules.Points
         public override int CalculateRowCount(IDictionary<string, List<GraphItem>> results)
             => 1;
 
-        public override int CalculateGridLineCount(float lowerLimit, float upperLimit)
+        public override (int GridLineCount, float Step) CalculateGridLines(float lowerLimit, float upperLimit)
         {
-            var thousands = (int)Math.Ceiling((upperLimit - lowerLimit) / 1000);
-            return (thousands / 5) - 1;
+            var targetInnerGridLineCount = 15f;
+            var rangeSize = upperLimit - lowerLimit;
+            var rawStep = rangeSize / targetInnerGridLineCount;
+            var magnitude = (float)Math.Pow(10, Math.Floor(Math.Log10(rawStep)));
+            var normalizedStep = rawStep / magnitude;
+            var step = normalizedStep switch
+            {
+                < 1.5f => 1.0f,
+                < 2.25f => 2.0f,
+                < 3.75f => 2.5f,
+                < 7.5f => 5.0f,
+                _ => 10.0f
+            } * magnitude;
+
+            var innerGridLineCount = (int) Math.Floor(rangeSize / step);
+            return (innerGridLineCount, step);
         }
 
         public override float ClampAxisValue(float value)
@@ -61,8 +75,11 @@ namespace Inkluzitron.Modules.Points
 
         public override (float, float) SmoothenAxisLimits(float minValue, float maxValue)
         {
-            minValue -= minValue % 1000f;
-            maxValue += 1000f - (maxValue % 1000f);
+            var decadicLogarithm = Math.Floor(Math.Log10(maxValue - minValue));
+            var largestReachedPowerOfTen = Math.Pow(10, Math.Max(1, decadicLogarithm));
+
+            minValue = 0;
+            maxValue += (float) (largestReachedPowerOfTen - (maxValue % largestReachedPowerOfTen));
             return (minValue, maxValue);
         }
     }

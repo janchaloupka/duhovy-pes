@@ -14,8 +14,8 @@ namespace Inkluzitron.Services
 
         public DrawableFont GridLinePercentageFont { get; set; }
         public double GridLinePercentageFontSize { get; set; } = 20;
-        public MagickColor GridLinePercentageForegroundMajor { get; set; } = new MagickColor("#AAAAAA60");
-        public MagickColor GridLinePercentageForegroundMinor { get; set; } = new MagickColor("#AAAAAA32");
+        public MagickColor GridLinePercentageForegroundMajor { get; set; } = new MagickColor("#AAAAAA90");
+        public MagickColor GridLinePercentageForegroundMinor { get; set; } = new MagickColor("#AAAAAA62");
         public MagickColor GridLineColorMinor { get; set; } = new MagickColor("#AAAAAA32");
         public MagickColor GridLineColorMajor { get; set; } = new MagickColor("#AAAAAA60");
 
@@ -36,7 +36,7 @@ namespace Inkluzitron.Services
         public abstract int CalculateRowCount(IDictionary<string, List<GraphItem>> results);
         public abstract (float, float) SmoothenAxisLimits(float minValue, float maxValue);
         public abstract float ClampAxisValue(float value);
-        public abstract int CalculateGridLineCount(float lowerLimit, float upperLimit);
+        public abstract (int GridLineCount, float Step) CalculateGridLines(float lowerLimit, float upperLimit);
         public abstract string FormatGridLineValueLabel(float value);
         public abstract string FormatUserValueLabel(float value);
 
