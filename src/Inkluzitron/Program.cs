@@ -33,6 +33,9 @@ namespace Inkluzitron
 
         static async Task RateLimitCallback(IRateLimitInfo info)
         {
+            if (info.Remaining > 0)
+                return;
+
             Console.WriteLine($"RATE LIMIT | Global={info.IsGlobal} Limit={info.Limit} Remaining={info.Remaining} RetryAfter={info.RetryAfter} ResetAt={info.Reset} ResetAfter={info.ResetAfter} Bucket={info.Bucket} Lag={info.Lag} Endpoint={info.Endpoint}");
         }
 
