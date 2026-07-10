@@ -26,7 +26,7 @@ namespace Inkluzitron.Modules.BdsmTestOrg
         public override (int GridLineCount, float Step) CalculateGridLines(float lowerLimit, float upperLimit)
         {
             const float rangeSize = 1.0f;
-            const float step = 0.1f;
+            const float step = 0.2f;
 
             var innerGridLineCount = (int)Math.Floor(rangeSize / step);
             return (innerGridLineCount, step);
