@@ -8,6 +8,7 @@ using Inkluzitron.Models.Settings;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Inkluzitron.Services
@@ -73,7 +74,7 @@ namespace Inkluzitron.Services
             await guild.DownloadUsersAsync();
 
             var sortedBirthdayEntries = birthdayUsers.ToAsyncEnumerable()
-                .SelectAwait(async dbUser => (
+                .Select(async (User dbUser, CancellationToken _) => (
                     Age: dbUser.BirthdayDate.Value.Year is int yearOfBirth && yearOfBirth != User.UnsetBirthdayYear
                          ? today.Year - yearOfBirth
                          : int.MaxValue,

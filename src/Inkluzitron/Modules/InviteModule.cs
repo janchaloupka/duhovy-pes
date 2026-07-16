@@ -84,7 +84,7 @@ namespace Inkluzitron.Modules
                     $"Byl ti vygenerován následující invite link na server **{Context.Guild.Name}**:\n{invite.Url}\n\nTento invite link můžeš poslat osobě, kterou chceš na server pozvat.\n\n**Informace:**\n • Pozvánka platí pouze na jedno použití\n • Pro pozvání více osob tedy musíš vygenerovat pozvánku pro každou osobu\n • Po připojení nové osoby se uloží informace o tom, kdo ji pozval");
 
             }
-            catch (HttpException ex) when (ex.DiscordCode == 50007)
+            catch (HttpException ex) when (ex.DiscordCode == DiscordErrorCode.CannotSendMessageToUser)
             {
                 // User has disabled DMs
 

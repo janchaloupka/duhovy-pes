@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ImageMagick;
+using ImageMagick.Drawing;
 using Inkluzitron.Models;
 
 namespace Inkluzitron.Services
@@ -8,13 +9,13 @@ namespace Inkluzitron.Services
     {
         public int ColumnCount { get; init; } = 5;
         public MagickColor BackgroundColor { get; set; } = MagickColors.Black;
-        public int CategoryBoxPadding { get; set; } = 20;
-        public int CategoryBoxHeight { get; set; } = 350;
+        public uint CategoryBoxPadding { get; set; } = 20;
+        public uint CategoryBoxHeight { get; set; } = 350;
 
         public DrawableFont GridLinePercentageFont { get; set; }
         public double GridLinePercentageFontSize { get; set; } = 20;
-        public MagickColor GridLinePercentageForegroundMajor { get; set; } = new MagickColor("#AAAAAA60");
-        public MagickColor GridLinePercentageForegroundMinor { get; set; } = new MagickColor("#AAAAAA32");
+        public MagickColor GridLinePercentageForegroundMajor { get; set; } = new MagickColor("#AAAAAA90");
+        public MagickColor GridLinePercentageForegroundMinor { get; set; } = new MagickColor("#AAAAAA62");
         public MagickColor GridLineColorMinor { get; set; } = new MagickColor("#AAAAAA32");
         public MagickColor GridLineColorMajor { get; set; } = new MagickColor("#AAAAAA60");
 
@@ -23,7 +24,7 @@ namespace Inkluzitron.Services
         public MagickColor CategoryBoxBackground { get; set; } = new MagickColor("#33333399");
         public MagickColor CategoryBoxHeadingForeground { get; set; } = new MagickColor("#EEEEEE7F");
 
-        public int AvatarSize { get; set; } = 64;
+        public uint AvatarSize { get; set; } = 64;
         public DrawableFont UsernameFont { get; set; }
         public double UsernameFontSize { get; set; } = 20;
         public MagickColor UsernameForeground { get; set; } = new MagickColor("#FFFFDD7F");
@@ -35,7 +36,7 @@ namespace Inkluzitron.Services
         public abstract int CalculateRowCount(IDictionary<string, List<GraphItem>> results);
         public abstract (float, float) SmoothenAxisLimits(float minValue, float maxValue);
         public abstract float ClampAxisValue(float value);
-        public abstract int CalculateGridLineCount(float lowerLimit, float upperLimit);
+        public abstract (int GridLineCount, float Step) CalculateGridLines(float lowerLimit, float upperLimit);
         public abstract string FormatGridLineValueLabel(float value);
         public abstract string FormatUserValueLabel(float value);
 

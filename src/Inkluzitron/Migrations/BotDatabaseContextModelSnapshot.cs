@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace Inkluzitron.Migrations
 {
     [DbContext(typeof(BotDatabaseContext))]
@@ -13,8 +15,7 @@ namespace Inkluzitron.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.7");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
 
             modelBuilder.Entity("BadgeUser", b =>
                 {
@@ -220,6 +221,9 @@ namespace Inkluzitron.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsMember")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsNewbie")
                         .HasColumnType("INTEGER");

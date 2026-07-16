@@ -43,7 +43,7 @@ namespace Inkluzitron.Handlers
             return firstLine[ThreadSafeRandom.Next(firstLine.Length)];
         }
 
-        private async Task OnUserLeftAsync(SocketGuildUser user)
+        private async Task OnUserLeftAsync(SocketGuild guild, SocketUser user)
         {
             await using var dbContext = DatabaseFactory.Create();
             var userDb = await dbContext.GetOrCreateUserEntityAsync(user);
@@ -56,7 +56,7 @@ namespace Inkluzitron.Handlers
                 Format.Sanitize(await UsersService.GetDisplayNameAsync(user))
             );
 
-            await user.Guild.SystemChannel.SendMessageAsync(leaveMessage);
+            await guild.SystemChannel.SendMessageAsync(leaveMessage);
         }
 
         /// <summary>

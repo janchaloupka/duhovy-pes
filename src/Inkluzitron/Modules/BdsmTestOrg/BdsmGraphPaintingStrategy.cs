@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+using ImageMagick;
+using ImageMagick.Drawing;
 using Inkluzitron.Models;
 using Inkluzitron.Services;
 using System;
@@ -11,10 +12,10 @@ namespace Inkluzitron.Modules.BdsmTestOrg
     {
         public BdsmGraphPaintingStrategy()
             : base(
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Bold },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light },
-                  new DrawableFont("Open Sans") { Stretch = FontStretch.Condensed, Weight = FontWeight.Light }
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed),
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Bold, FontStretch.Condensed),
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed),
+                  new DrawableFont("Open Sans", FontStyleType.Normal, FontWeight.Normal, FontStretch.Condensed)
             )
         {
         }
@@ -22,16 +23,13 @@ namespace Inkluzitron.Modules.BdsmTestOrg
         public override int CalculateColumnCount(IDictionary<string, List<GraphItem>> results)
             => Math.Min(ColumnCount, results.Count);
 
-        public override int CalculateGridLineCount(float lowerLimit, float upperLimit)
+        public override (int GridLineCount, float Step) CalculateGridLines(float lowerLimit, float upperLimit)
         {
-            var range = Clamp(upperLimit - lowerLimit, 0.1f, 1.0f);
-            var tenths = (int)Math.Round(range / 0.1f);
-            return tenths switch
-            {
-                1 => 1,
-                2 => 3,
-                _ => tenths - 1
-            };
+            const float rangeSize = 1.0f;
+            const float step = 0.2f;
+
+            var innerGridLineCount = (int)Math.Floor(rangeSize / step);
+            return (innerGridLineCount, step);
         }
 
         public override int CalculateRowCount(IDictionary<string, List<GraphItem>> results)
@@ -48,8 +46,8 @@ namespace Inkluzitron.Modules.BdsmTestOrg
 
         public override (float, float) SmoothenAxisLimits(float minValue, float maxValue)
         {
-            minValue -= minValue % 0.1f; // round down to nearest multiple of 0.1
-            maxValue += 0.1f - (maxValue % 0.1f); // round up to nearest multiple of 0.9
+            minValue = 0;
+            maxValue = 1;
             return (minValue, maxValue);
         }
     }

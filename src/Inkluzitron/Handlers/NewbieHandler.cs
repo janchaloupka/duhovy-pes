@@ -7,6 +7,7 @@ using Inkluzitron.Data;
 using Inkluzitron.Extensions;
 using Inkluzitron.Models.Settings;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Inkluzitron.Handlers
 {
@@ -34,9 +35,9 @@ namespace Inkluzitron.Handlers
         /// <param name="userOld">old user data</param>
         /// <param name="userNew">new user data</param>
         /// <returns></returns>
-        private async Task GuildMemberUpdated(SocketGuildUser userOld, SocketGuildUser userNew)
+        private async Task GuildMemberUpdated(Cacheable<SocketGuildUser, ulong> userOld, SocketGuildUser userNew)
         {
-            var isOldUserNewbie = userOld.Roles.Any(role => role.Id == BotSettings.NewbieRoleId);
+            var isOldUserNewbie = userOld.HasValue ? userOld.Value.Roles.Any(role => role.Id == BotSettings.NewbieRoleId) : default(bool?);
             var isNewUserNewbie = userNew.Roles.Any(role => role.Id == BotSettings.NewbieRoleId);
 
             if (isOldUserNewbie == isNewUserNewbie)

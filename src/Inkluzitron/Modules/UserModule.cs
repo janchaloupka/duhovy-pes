@@ -180,16 +180,16 @@ namespace Inkluzitron.Modules
 
         private MemoryStream GetBadgesAsSingleImage(ICollection<Badge> badges)
         {
-            var margin = 2;
-            var badgeSize = 24;
+            var margin = 2u;
+            var badgeSize = 24u;
 
-            var gridCount = 2;
+            var gridCount = 2u;
             if (badges.Count > 4)
-                gridCount = 3;
+                gridCount = 3u;
             else if (badges.Count > 9)
-                gridCount = 4;
+                gridCount = 4u;
             else if (badges.Count > 16)
-                gridCount = 5;
+                gridCount = 5u;
 
             using var image = new MagickImage(
                 MagickColors.Transparent,
@@ -204,8 +204,8 @@ namespace Inkluzitron.Modules
                 badgeImage.Resize(badgeSize, badgeSize);
                 image.Composite(
                     badgeImage,
-                    image.Width - badgeSize - (badgeSize + margin) * (index % gridCount),
-                    (badgeSize + margin) * (index / gridCount),
+                    (int) (image.Width - badgeSize - (badgeSize + margin) * (index % gridCount)),
+                    (int) ((badgeSize + margin) * (index / gridCount)),
                     CompositeOperator.Over
                 );
 

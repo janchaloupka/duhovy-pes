@@ -31,6 +31,14 @@ namespace Inkluzitron
     {
         static public Task Main(string[] args) => MainAsync(args);
 
+        static async Task RateLimitCallback(IRateLimitInfo info)
+        {
+            if (info.Remaining > 0)
+                return;
+
+            Console.WriteLine($"RATE LIMIT | Global={info.IsGlobal} Limit={info.Limit} Remaining={info.Remaining} RetryAfter={info.RetryAfter} ResetAt={info.Reset} ResetAfter={info.ResetAfter} Bucket={info.Bucket} Lag={info.Lag} Endpoint={info.Endpoint}");
+        }
+
         static private async Task MainAsync(string[] args)
         {
             var closeAppToken = new CancellationTokenSource();
@@ -48,7 +56,9 @@ namespace Inkluzitron
             {
                 LogLevel = LogSeverity.Verbose,
                 MessageCacheSize = 100000,
-                RateLimitPrecision = RateLimitPrecision.Millisecond
+                DefaultRatelimitCallback = RateLimitCallback,
+                AlwaysDownloadUsers = true,
+                GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildMembers | GatewayIntents.MessageContent
             };
 
             var commandsConfig = new CommandServiceConfig()

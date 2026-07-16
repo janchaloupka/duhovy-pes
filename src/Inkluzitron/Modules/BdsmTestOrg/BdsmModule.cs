@@ -236,7 +236,10 @@ namespace Inkluzitron.Modules.BdsmTestOrg
 
             traitsToShow.ExceptWith(traitsToHide);
 
-            var dataSource = DbContext.BdsmTestOrgResults.Include(i => i.Items).AsQueryable();
+            var dataSource = DbContext.BdsmTestOrgResults
+                .Where(result => result.User.IsMember)
+                .Include(i => i.Items)
+                .AsQueryable();
 
             foreach (var (trait, threshold) in lowerThanFilters)
                 dataSource = dataSource.Where(r => r.Items.All(i => i.Trait != trait || i.Score < threshold));
