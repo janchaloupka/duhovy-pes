@@ -28,6 +28,8 @@ public class UserIsMemberHandler : IHandler
         await Patiently.HandleDbConcurrency(async () =>
         {
             var dbUser = await ctx.Users.FindAsync(user.Id);
+            if (dbUser == null)
+              return;
             dbUser.IsMember = false;
             await ctx.SaveChangesAsync();
         });
@@ -39,6 +41,8 @@ public class UserIsMemberHandler : IHandler
         await Patiently.HandleDbConcurrency(async () =>
         {
             var dbUser = await ctx.Users.FindAsync(user.Id);
+            if (dbUser == null)
+              return;
             dbUser.IsMember = true;
             await ctx.SaveChangesAsync();
         });
