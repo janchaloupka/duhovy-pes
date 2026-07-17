@@ -59,33 +59,20 @@ public class UserIsMemberHandler : IHandler
 
             Logger.LogInformation("OnGuildAvailableAsync: Downloaded all users, updating IsMember properties.");
             var currentMemberIds = guild.Users.Select(u => u.Id).ToHashSet();
-            var lastId = 0ul;
 
-            while (true)
+            using var ctx = DatabaseFactory.Create();
+
+            await Patiently.HandleDbConcurrency(async () =>
             {
-                using var ctx = DatabaseFactory.Create();
-
-                var noMoreUsers = await Patiently.HandleDbConcurrency(async () =>
+                var batch = await ctx.Users.ToListAsync();
+                foreach (var dbUser in batch)
                 {
-                    var batch = await ctx.Users.OrderBy(user => user.Id).Where(u => u.Id > lastId).Take(20).ToListAsync();
-                    foreach (var dbUser in batch)
-                    {
-                        dbUser.IsMember = currentMemberIds.Contains(dbUser.Id);
-                    }
+                    dbUser.IsMember = currentMemberIds.Contains(dbUser.Id);
+                }
 
-                    Logger.LogInformation($"OnGuildAvailableAsync: Saving {batch.Count} updates");
-                    await ctx.SaveChangesAsync();
-
-                    if (batch.Count == 0)
-                        return true;
-
-                    lastId = batch.Last().Id;
-                    return false;
-                });
-
-                if (noMoreUsers)
-                    break;
-            }
+                Logger.LogInformation($"OnGuildAvailableAsync: Updated {batch.Count} users and their IsMember status");
+                await ctx.SaveChangesAsync();
+            });
 
             Logger.LogInformation("OnGuildAvailableAsync: Done updating IsMember properties.");
         });
