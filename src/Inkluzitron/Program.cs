@@ -42,10 +42,14 @@ namespace Inkluzitron
 
         static private async Task MainAsync(string[] args)
         {
+            LogUncaughtAppDomainExceptions();
+            LogUnobservedTaskExceptions();
+
             var closeAppToken = new CancellationTokenSource();
 
             Console.CancelKeyPress += (_, e) =>
             {
+                Console.WriteLine("CancelKeyPress: Starting graceful shutdown.");
                 // Handles CTRL+C (SIGINT) signals.
                 e.Cancel = true;
                 closeAppToken.Cancel();
@@ -56,6 +60,7 @@ namespace Inkluzitron
                 if (closeAppToken.IsCancellationRequested)
                     return;
 
+                Console.WriteLine("SIGTERM: Starting graceful shutdown.");
                 ctx.Cancel = true;
                 closeAppToken.Cancel();
             });
@@ -165,6 +170,22 @@ namespace Inkluzitron
 
             await runtimeService.StopAsync();
             await provider.DisposeAsync();
+        }
+
+        private static void LogUnobservedTaskExceptions()
+        {
+            TaskScheduler.UnobservedTaskException += (sender, args) =>
+            {
+                Console.WriteLine($"Unobserved task exception: {args.Exception}");
+            };
+        }
+
+        private static void LogUncaughtAppDomainExceptions()
+        {
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                Console.WriteLine($"Unhandled AppDomain exception: {args.ExceptionObject}");
+            };
         }
 
         static public IConfiguration BuildConfiguration(string[] args)
