@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Inkluzitron.Data;
 using Inkluzitron.Extensions;
 using Inkluzitron.Models.Settings;
 using System;
@@ -12,11 +13,13 @@ namespace Inkluzitron.Services
     {
         private BotSettings BotSettings { get; }
         private DiscordSocketClient DiscordClient { get; }
+        private DatabaseFactory DatabaseFactory { get; }
 
-        public UsersService(BotSettings botSettings, DiscordSocketClient discordClient)
+        public UsersService(BotSettings botSettings, DiscordSocketClient discordClient, DatabaseFactory databaseFactory)
         {
             BotSettings = botSettings;
             DiscordClient = discordClient;
+            DatabaseFactory = databaseFactory;
         }
 
         public async Task<SocketGuildUser> GetUserFromHomeGuild(ulong userId)
@@ -36,11 +39,15 @@ namespace Inkluzitron.Services
         public async Task<string> GetDisplayNameAsync(ulong userId)
         {
             var user = await GetUserFromHomeGuild(userId);
+            var displayName = user?.Nickname ?? user?.Username;
 
             if (user == null)
-                return null;
+            {
+                using var ctx = DatabaseFactory.Create();
+                displayName = (await ctx.Users.FindAsync(userId))?.Name;
+            }
 
-            return user.Nickname ?? user.Username;
+            return displayName;
         }
 
         public async Task<string> GetDisplayNameAsync(IUser user)

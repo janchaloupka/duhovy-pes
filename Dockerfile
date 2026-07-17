@@ -18,4 +18,5 @@ WORKDIR /app
 COPY --from=build /app .
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-ENTRYPOINT ["./Inkluzitron"]
+STOPSIGNAL SIGINT
+ENTRYPOINT ["/app/Inkluzitron"]

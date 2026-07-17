@@ -55,15 +55,8 @@ namespace Inkluzitron
                 closeAppToken.Cancel();
             };
 
-            PosixSignalRegistration.Create(PosixSignal.SIGTERM, ctx =>
-            {
-                if (closeAppToken.IsCancellationRequested)
-                    return;
-
-                Console.WriteLine("SIGTERM: Starting graceful shutdown.");
-                ctx.Cancel = true;
-                closeAppToken.Cancel();
-            });
+            foreach (var signal in new[] { PosixSignal.SIGTERM, PosixSignal.SIGINT })
+                PosixSignalRegistration.Create(signal, HandlePosixStopSignal);
 
             var configuration = BuildConfiguration(args);
 
@@ -165,11 +158,22 @@ namespace Inkluzitron
                 // Can ignore
             }
 
+            Console.WriteLine("Stopping.");
+
             foreach (var runtimeEventHandler in provider.GetServices<IRuntimeEventHandler>().Reverse())
                 await runtimeEventHandler.OnBotStoppingAsync();
 
             await runtimeService.StopAsync();
             await provider.DisposeAsync();
+
+            return;
+
+            void HandlePosixStopSignal(PosixSignalContext ctx)
+            {
+                Console.WriteLine($"{ctx.Signal}: Starting graceful shutdown.");
+                ctx.Cancel = true;
+                closeAppToken.Cancel();
+            }
         }
 
         private static void LogUnobservedTaskExceptions()

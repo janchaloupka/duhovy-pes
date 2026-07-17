@@ -237,10 +237,11 @@ namespace Inkluzitron.Services
                 .SumAsync(a => a.Points);
         }
 
-        public async Task<List<PointsLeaderboardData>> GetLeaderboardWithGhostsAsync(int startFrom = 0, int count = 10, DateTime? from = null)
+        public async Task<List<PointsLeaderboardData>> GetLeaderboardAsyncImpl(int startFrom = 0, int count = 10, DateTime? from = null)
         {
             using var context = DatabaseFactory.Create();
             var userPoints = context.Users.Include(u => u.DailyActivity).AsQueryable()
+                .Where(u => u.IsMember)
                 .Select(u => new { u.Id, Points = u.DailyActivity.Where(p => !from.HasValue || p.Day >= from.Value).Sum(p => p.Points) })
                 .OrderByDescending(u => u.Points)
                 .Skip(startFrom).Take(count)
@@ -269,13 +270,13 @@ namespace Inkluzitron.Services
             // Fill the board with users but filter out all ghosts (people who are no longer on a server)
             while (board.Count < count)
             {
-                var boardWithGhosts = await GetLeaderboardWithGhostsAsync(startFrom, count, from);
+                var boardEntries = await GetLeaderboardAsyncImpl(startFrom, count, from);
                 startFrom += count;
 
-                board.AddRange(boardWithGhosts.Where(p => p.UserDisplayName != null));
+                board.AddRange(boardEntries);
 
                 // Stop condition, we have iterated through the entire board
-                if (boardWithGhosts.Count < count)
+                if (boardEntries.Count < count)
                 {
                     break;
                 }
