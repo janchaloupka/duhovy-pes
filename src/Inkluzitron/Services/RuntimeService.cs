@@ -7,6 +7,7 @@ using Inkluzitron.Services.TypeReaders;
 using Inkluzitron.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,21 +25,21 @@ namespace Inkluzitron.Services
         private IConfiguration Configuration { get; }
         private IServiceScope CommandServiceScope { get; set; }
         private FileCache Cache { get; }
+        public ILogger<RuntimeService> Logger { get; }
         private bool GuildReadyStateAnnounced { get; set; }
 
         private ulong HomeGuildId { get; }
         private ulong LoggingChannelId { get; }
         private string OnlineAfterUpdate { get; }
 
-        public RuntimeService(DiscordSocketClient discordClient, IServiceProvider serviceProvider, CommandService commandService,
-            IConfiguration configuration, FileCache cache)
+        public RuntimeService(DiscordSocketClient discordClient, IServiceProvider serviceProvider, CommandService commandService, IConfiguration configuration, FileCache cache, ILogger<RuntimeService> logger)
         {
             DiscordClient = discordClient;
             ServiceProvider = serviceProvider;
             CommandService = commandService;
             Configuration = configuration;
             Cache = cache;
-
+            Logger = logger;
             LoggingChannelId = Configuration.GetRequired<ulong>("LoggingChannelId");
             HomeGuildId = Configuration.GetRequired<ulong>("HomeGuildId");
             OnlineAfterUpdate = Configuration.GetRequired<string>("OnlineAfterUpdate");
@@ -131,6 +132,10 @@ namespace Inkluzitron.Services
 
             await DiscordClient.LoginAsync(TokenType.Bot, token);
             await DiscordClient.StartAsync();
+
+            Logger.LogInformation("Downloading guild users on startup");
+            await DiscordClient.DownloadUsersAsync([DiscordClient.GetGuild(HomeGuildId)]);
+            Logger.LogInformation("Done downloading guild users on startup");
 
             CommandService.AddTypeReader<Guid>(new GuidTypeReader());
             CommandService.AddTypeReader<IMessage>(new MessageTypeReader(), true);
