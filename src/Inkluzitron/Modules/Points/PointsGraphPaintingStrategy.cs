@@ -51,7 +51,7 @@ namespace Inkluzitron.Modules.Points
             => value;
 
         static private string CreateLabel(float value, string order)
-            => $"{value.ToString("F2", CultureInfo.InvariantCulture)}{order}";
+            => $"{value.ToString("F0", CultureInfo.InvariantCulture)}{order}";
 
         static private string FormatValue(float value)
         {
@@ -60,7 +60,7 @@ namespace Inkluzitron.Modules.Points
             float absVal = Math.Abs(value);
 
             if (absVal > Million)
-                return CreateLabel(value / Million, "m");
+                return CreateLabel(value / Million, "M");
             else if (absVal > Thousand)
                 return CreateLabel(value / Thousand, "k");
             else
