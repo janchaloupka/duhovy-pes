@@ -22,6 +22,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,6 +50,15 @@ namespace Inkluzitron
                 e.Cancel = true;
                 closeAppToken.Cancel();
             };
+
+            PosixSignalRegistration.Create(PosixSignal.SIGTERM, ctx =>
+            {
+                if (closeAppToken.IsCancellationRequested)
+                    return;
+
+                ctx.Cancel = true;
+                closeAppToken.Cancel();
+            });
 
             var configuration = BuildConfiguration(args);
 
