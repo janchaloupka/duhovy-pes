@@ -2,6 +2,7 @@
 using Inkluzitron.Data;
 using Inkluzitron.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,12 +12,13 @@ public class UserIsMemberHandler : IHandler
 {
     private DiscordSocketClient DiscordSocketClient { get; }
     private DatabaseFactory DatabaseFactory { get; }
+    public ILogger<UserIsMemberHandler> Logger { get; }
 
-    public UserIsMemberHandler(DiscordSocketClient discordSocketClient, DatabaseFactory databaseFactory)
+    public UserIsMemberHandler(DiscordSocketClient discordSocketClient, DatabaseFactory databaseFactory, ILogger<UserIsMemberHandler> logger)
     {
         DiscordSocketClient = discordSocketClient;
         DatabaseFactory = databaseFactory;
-
+        Logger = logger;
         DiscordSocketClient.UserJoined += OnUserJoinedAsync;
         DiscordSocketClient.UserLeft += OnUserLeftAsync;
         DiscordSocketClient.GuildAvailable += OnGuildAvailableAsync;
@@ -52,8 +54,10 @@ public class UserIsMemberHandler : IHandler
     {
         _ = Task.Run(async () =>
         {
+            Logger.LogInformation("OnGuildAvailableAsync: Downloading all users.");
             await guild.DownloadUsersAsync().ConfigureAwait(false);
 
+            Logger.LogInformation("OnGuildAvailableAsync: Downloaded all users, updating IsMember properties.");
             var currentMemberIds = guild.Users.Select(u => u.Id).ToHashSet();
             var lastId = 0ul;
 
@@ -69,6 +73,7 @@ public class UserIsMemberHandler : IHandler
                         dbUser.IsMember = currentMemberIds.Contains(dbUser.Id);
                     }
 
+                    Logger.LogInformation($"OnGuildAvailableAsync: Saving {batch.Count} updates");
                     await ctx.SaveChangesAsync();
 
                     if (batch.Count == 0)
@@ -81,6 +86,8 @@ public class UserIsMemberHandler : IHandler
                 if (noMoreUsers)
                     break;
             }
+
+            Logger.LogInformation("OnGuildAvailableAsync: Done updating IsMember properties.");
         });
     }
 }
