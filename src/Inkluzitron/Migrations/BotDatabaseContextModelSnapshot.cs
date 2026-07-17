@@ -223,7 +223,9 @@ namespace Inkluzitron.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsMember")
-                        .HasColumnType("INTEGER");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsNewbie")
                         .HasColumnType("INTEGER");
